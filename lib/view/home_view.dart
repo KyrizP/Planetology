@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:planetology/view/planets_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -54,7 +55,13 @@ class _HomeViewState extends State<HomeView> {
                         child: InkWell(
                           borderRadius:
                               const BorderRadius.all(Radius.circular(20)),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PlanetsView(),
+                                ));
+                          },
                           child: Padding(
                             padding: const EdgeInsets.all(20.0),
                             child: Column(
