@@ -136,13 +136,6 @@ class _HomeViewState extends State<HomeView> {
                                   builder: (context) => AstronomyView(),
                                 ));
                           },
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AstronomyView(),
-                                ));
-                          },
                           borderRadius:
                               const BorderRadius.all(Radius.circular(20)),
                           child: Padding(
