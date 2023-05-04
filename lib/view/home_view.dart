@@ -58,11 +58,21 @@ class _HomeViewState extends State<HomeView> {
                           borderRadius:
                               const BorderRadius.all(Radius.circular(20)),
                           onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PlanetsView(),
-                                ));
+                            Navigator.of(context).push(
+                              PageRouteBuilder(
+                                pageBuilder: (context, animations,
+                                        secondaryAnimations) =>
+                                    const PlanetsView(),
+                                transitionsBuilder: (context, animations,
+                                    secondaryAnimations, childs) {
+                                  final tween = Tween(begin: 0.0, end: 1.0);
+                                  return FadeTransition(
+                                    opacity: animations.drive(tween),
+                                    child: childs,
+                                  );
+                                },
+                              ),
+                            );
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(20.0),
@@ -133,7 +143,7 @@ class _HomeViewState extends State<HomeView> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => AstronomyView(),
+                                  builder: (context) => const AstronomyView(),
                                 ));
                           },
                           borderRadius:
