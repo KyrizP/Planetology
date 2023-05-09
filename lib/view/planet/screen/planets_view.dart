@@ -1,10 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:planetology/view/detail_view.dart';
+import 'package:planetology/view/planet/screen/detail_view.dart';
 import 'package:provider/provider.dart';
 
-import '../utils/state/my_state.dart';
-import '../view_model/planet_provider.dart';
+import '../../../utils/state/my_state.dart';
+import '../../../view_model/planet_provider.dart';
 
 class PlanetsView extends StatefulWidget {
   const PlanetsView({super.key});
@@ -16,7 +16,6 @@ class PlanetsView extends StatefulWidget {
 class _PlanetsViewState extends State<PlanetsView> {
   ScrollController scrollC = ScrollController();
 
-  int _current = 0;
   final CarouselController _carouselController = CarouselController();
 
   @override
@@ -41,6 +40,7 @@ class _PlanetsViewState extends State<PlanetsView> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
+          splashRadius: 25,
           onPressed: () {
             Navigator.pop(context);
           },
@@ -52,10 +52,13 @@ class _PlanetsViewState extends State<PlanetsView> {
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Image.asset(
-              width: 45,
-              "assets/images/app_icon.png",
-              fit: BoxFit.fitWidth,
+            child: Hero(
+              tag: "LogoTag",
+              child: Image.asset(
+                width: 45,
+                "assets/images/app_icon.png",
+                fit: BoxFit.fitWidth,
+              ),
             ),
           ),
         ],
@@ -78,7 +81,31 @@ class _PlanetsViewState extends State<PlanetsView> {
                   color: Colors.blueAccent[100],
                 ));
               } else if (value.myState == MyState.failed) {
-                return const Text('Oops, something went wrong!');
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Text(
+                        'Oops, Something Went Wrong!',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        textAlign: TextAlign.center,
+                        'Make Sure Internet is Connected.',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               } else if (value.myState == MyState.success) {
                 return Column(
                   children: [
@@ -92,9 +119,7 @@ class _PlanetsViewState extends State<PlanetsView> {
                           enlargeCenterPage: true,
                           viewportFraction: 1.1,
                           onPageChanged: (index, reason) {
-                            setState(() {
-                              _current = index;
-                            });
+                            value.changePage(index);
                           },
                         ),
                         itemBuilder: (context, index, realIndex) {
@@ -112,80 +137,101 @@ class _PlanetsViewState extends State<PlanetsView> {
                                     const SizedBox(
                                       height: 60,
                                     ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                Colors.white.withOpacity(0.2),
-                                            blurRadius: 30,
-                                            spreadRadius: 3,
-                                          )
-                                        ],
-                                      ),
-                                      child: Text(
-                                        planet.name!.toUpperCase(),
-                                        style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 50,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    Text(
-                                      value.planetNickname[index],
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w300),
-                                    ),
-                                    const SizedBox(height: 100),
-                                    Center(
+                                    Hero(
+                                      tag: "PlanetName",
                                       child: Container(
-                                        height: 305,
                                         decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: AssetImage(
-                                                value.planetImg[index]),
-                                            fit: BoxFit.contain,
-                                          ),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: const Color.fromARGB(
-                                                      255, 41, 78, 152)
-                                                  .withOpacity(0.6),
-                                              blurRadius: 150,
-                                              spreadRadius: 10,
+                                              color:
+                                                  Colors.white.withOpacity(0.2),
+                                              blurRadius: 30,
+                                              spreadRadius: 3,
                                             )
                                           ],
                                         ),
-                                        child: Material(
-                                          color: Colors.transparent,
-                                          shape: const CircleBorder(),
-                                          child: InkWell(
-                                            customBorder: const CircleBorder(),
-                                            onTap: () {
-                                              Navigator.of(context).push(
-                                                PageRouteBuilder(
-                                                  pageBuilder: (context,
-                                                          animations,
-                                                          secondaryAnimations) =>
-                                                      DetailView(
-                                                          indexPlanet: index),
-                                                  transitionsBuilder: (context,
-                                                      animations,
-                                                      secondaryAnimations,
-                                                      childs) {
-                                                    final tween = Tween(
-                                                        begin: 0.0, end: 1.0);
-                                                    return FadeTransition(
-                                                      opacity: animations
-                                                          .drive(tween),
-                                                      child: childs,
-                                                    );
-                                                  },
-                                                ),
-                                              );
-                                            },
+                                        child: Text(
+                                          planet.name.toUpperCase(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge!
+                                              .copyWith(
+                                                  color: Colors.white,
+                                                  fontSize: 50,
+                                                  fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ),
+                                    Hero(
+                                      tag: "PlanetNickname",
+                                      child: Text(
+                                        value.planetNickname[index],
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge!
+                                            .copyWith(
+                                                color: Colors.white,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w300),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 100),
+                                    Center(
+                                      child: Hero(
+                                        tag: "PlanetTag",
+                                        child: Container(
+                                          height: 305,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: AssetImage(
+                                                value.planetImg[index],
+                                              ),
+                                              fit: BoxFit.contain,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: const Color.fromARGB(
+                                                        255, 41, 78, 152)
+                                                    .withOpacity(0.6),
+                                                blurRadius: 150,
+                                                spreadRadius: 10,
+                                              )
+                                            ],
+                                          ),
+                                          child: Material(
+                                            color: Colors.transparent,
+                                            shape: const CircleBorder(),
+                                            child: InkWell(
+                                              customBorder:
+                                                  const CircleBorder(),
+                                              onTap: () {
+                                                Navigator.of(context).push(
+                                                  PageRouteBuilder(
+                                                    transitionDuration:
+                                                        const Duration(
+                                                            seconds: 2),
+                                                    pageBuilder: (context,
+                                                            animations,
+                                                            secondaryAnimations) =>
+                                                        DetailView(
+                                                            indexPlanet: index),
+                                                    transitionsBuilder:
+                                                        (context,
+                                                            animations,
+                                                            secondaryAnimations,
+                                                            childs) {
+                                                      final tween = Tween(
+                                                          begin: 0.0, end: 1.0);
+                                                      return FadeTransition(
+                                                        opacity: animations
+                                                            .drive(tween),
+                                                        child: childs,
+                                                      );
+                                                    },
+                                                  ),
+                                                );
+                                              },
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -227,9 +273,10 @@ class _PlanetsViewState extends State<PlanetsView> {
                                                     Brightness.dark
                                                 ? Colors.white
                                                 : Colors.white)
-                                            .withOpacity(_current == entry.key
-                                                ? 1.0
-                                                : 0.4),
+                                            .withOpacity(
+                                                value.current == entry.key
+                                                    ? 1.0
+                                                    : 0.4),
                                         boxShadow: [
                                           BoxShadow(
                                             color:

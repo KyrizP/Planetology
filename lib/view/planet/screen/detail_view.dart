@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:like_button/like_button.dart';
+import 'package:planetology/view_model/db_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-import '../utils/widget/detail_container.dart';
-import '../view_model/planet_provider.dart';
+import '../../../model/favorite_model.dart';
+import '../widget/detail_container.dart';
+import '../../../view_model/planet_provider.dart';
 
 class DetailView extends StatefulWidget {
   final int indexPlanet;
@@ -28,6 +29,7 @@ class _DetailViewState extends State<DetailView> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
+          splashRadius: 25,
           onPressed: () {
             Navigator.pop(context);
           },
@@ -36,10 +38,89 @@ class _DetailViewState extends State<DetailView> {
             color: Colors.white,
           ),
         ),
-        actions: const [
+        actions: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: LikeButton(),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Consumer<DbProvider>(builder: (context, value, _) {
+              for (var element in value.favoriteModels) {
+                if (element.name == planet.name) {
+                  planet.isFavorite = true;
+                }
+              }
+              return IconButton(
+                splashRadius: 25,
+                onPressed: () async {
+                  if (value.favoriteModels.isEmpty) {
+                    await value.addFavorite(FavoriteModel(
+                      name: planet.name,
+                      planetImg: planetImg,
+                      idPlanet: planet.id,
+                    ));
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Center(
+                              child: Text('Added To Your Favorite List!')),
+                          duration: const Duration(seconds: 1),
+                          backgroundColor: Colors.black.withOpacity(0.5),
+                        ),
+                      );
+                    }
+                  } else {
+                    for (var element in value.favoriteModels) {
+                      if (element.name == planet.name) {
+                        planet.isFavorite = true;
+                      }
+                    }
+                    if (planet.isFavorite == false) {
+                      await value.addFavorite(FavoriteModel(
+                        name: planet.name,
+                        planetImg: planetImg,
+                        idPlanet: planet.id,
+                      ));
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Center(
+                                child: Text('Added To Your Favorite List!')),
+                            duration: const Duration(seconds: 1),
+                            backgroundColor: Colors.black.withOpacity(0.5),
+                          ),
+                        );
+                      }
+                    } else {
+                      await value.deleteFavorite(
+                        planet.name,
+                      );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Center(
+                                child:
+                                    Text('Removed From Your Favorite List!')),
+                            duration: const Duration(seconds: 1),
+                            backgroundColor: Colors.black.withOpacity(0.5),
+                          ),
+                        );
+                      }
+                    }
+                  }
+
+                  provider.favPlanet(widget.indexPlanet);
+                },
+                icon: planet.isFavorite == true
+                    ? const Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                        size: 30,
+                      )
+                    : const Icon(
+                        Icons.favorite,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+              );
+            }),
           ),
         ],
       ),
@@ -71,37 +152,46 @@ class _DetailViewState extends State<DetailView> {
                       )
                     ],
                   ),
-                  child: Text(
-                    planet.name!.toUpperCase(),
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 50,
-                        fontWeight: FontWeight.bold),
+                  child: Hero(
+                    tag: "PlanetName",
+                    child: Text(
+                      planet.name.toUpperCase(),
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          color: Colors.white,
+                          fontSize: 50,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
-                Text(
-                  planetNickname,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w300),
+                Hero(
+                  tag: "PlanetNickname",
+                  child: Text(
+                    planetNickname,
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w300),
+                  ),
                 ),
                 const SizedBox(height: 15),
-                Container(
-                  height: 180,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(planetImg),
-                      fit: BoxFit.contain,
+                Hero(
+                  tag: "PlanetTag",
+                  child: Container(
+                    height: 180,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(planetImg),
+                        fit: BoxFit.contain,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color.fromARGB(255, 41, 78, 152)
+                              .withOpacity(0.6),
+                          blurRadius: 150,
+                          spreadRadius: 10,
+                        )
+                      ],
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color.fromARGB(255, 41, 78, 152)
-                            .withOpacity(0.6),
-                        blurRadius: 150,
-                        spreadRadius: 10,
-                      )
-                    ],
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -116,8 +206,6 @@ class _DetailViewState extends State<DetailView> {
                       )
                     ],
                   ),
-
-                  // er
                   height: MediaQuery.of(context).size.height * 0.55,
                   child: Padding(
                     padding:
@@ -126,7 +214,7 @@ class _DetailViewState extends State<DetailView> {
                       children: [
                         Text(
                           textAlign: TextAlign.justify,
-                          provider.planets[widget.indexPlanet].description!,
+                          provider.planets[widget.indexPlanet].description,
                           style: const TextStyle(
                               color: Color.fromARGB(255, 136, 178, 246),
                               fontSize: 15,
@@ -136,7 +224,7 @@ class _DetailViewState extends State<DetailView> {
 
                         //Planet Order
                         DetailContainer(
-                          planet: planet.planetOrder!.toString(),
+                          planet: planet.planetOrder.toString(),
                           detailTitle: "Planet's Order",
                           icon: Icons.auto_mode_rounded,
                         ),
@@ -144,7 +232,7 @@ class _DetailViewState extends State<DetailView> {
 
                         //Volume
                         DetailContainer(
-                          planet: planet.basicDetails!.volume!,
+                          planet: planet.basicDetails.volume,
                           detailTitle: "Volume",
                           icon: Icons.rotate_left_rounded,
                         ),
@@ -152,7 +240,7 @@ class _DetailViewState extends State<DetailView> {
 
                         //Mass
                         DetailContainer(
-                          planet: planet.basicDetails!.mass!,
+                          planet: planet.basicDetails.mass,
                           detailTitle: "Mass",
                           icon: Icons.scale_rounded,
                         ),
@@ -169,13 +257,13 @@ class _DetailViewState extends State<DetailView> {
                               GestureDetector(
                                 onTap: () async {
                                   try {
-                                    await launchUrlString(planet.wikiLink!);
+                                    await launchUrlString(planet.wikiLink);
                                   } catch (err) {
                                     debugPrint('Something bad happened');
                                   }
                                 },
                                 child: Text(
-                                  planet.wikiLink!,
+                                  planet.wikiLink,
                                   style: const TextStyle(
                                       color: Colors.blue,
                                       decoration: TextDecoration.underline),

@@ -7,9 +7,12 @@ import '../utils/state/my_state.dart';
 class PlanetProvider extends ChangeNotifier {
   final MyService service = MyService();
 
-  List<PlanetModel> planets = [];
-
+  List<PlanetModel> _planets = [];
   MyState myState = MyState.loading;
+  int _current = 0;
+
+  List<PlanetModel> get planets => _planets;
+  int get current => _current;
 
   final List<String> planetImg = [
     "assets/images/planets/1mercury.png",
@@ -37,17 +40,27 @@ class PlanetProvider extends ChangeNotifier {
       myState = MyState.loading;
       notifyListeners();
 
-      planets = await service.fetchPlanet();
+      _planets = await service.fetchPlanet();
 
       myState = MyState.success;
       notifyListeners();
     } catch (e) {
       if (e is DioError) {
-        e.response!.statusCode;
+        e.response?.statusCode;
       }
 
       myState = MyState.failed;
       notifyListeners();
     }
+  }
+
+  void changePage(int index) {
+    _current = index;
+    notifyListeners();
+  }
+
+  void favPlanet(int index) {
+    planets[index].isFavorite = !planets[index].isFavorite;
+    notifyListeners();
   }
 }

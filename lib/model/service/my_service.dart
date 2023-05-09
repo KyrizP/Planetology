@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
+import 'package:planetology/utils/constant/api_key.dart';
 import '../astro_model.dart';
 import '../planet_model.dart';
 
@@ -13,7 +14,7 @@ class MyService {
       final response = await dio.get(
         'https://planets-info-by-newbapi.p.rapidapi.com/api/v1/planets/',
         options: Options(
-          headers: {'X-RapidAPI-Key': keyPlanet},
+          headers: {'X-RapidAPI-Key': ApiKey.keyPlanet},
         ),
       );
 
@@ -29,7 +30,7 @@ class MyService {
   Future<AstroModel> fetchAstroDay() async {
     try {
       final response = await dio.get(
-        'https://api.nasa.gov/planetary/apod?api_key=$keyAstro&date=${DateFormat('yyy-MM-dd').format(date)}',
+        'https://api.nasa.gov/planetary/apod?api_key=${ApiKey.keyAstro}&date=${DateFormat('yyy-MM-dd').format(date)}',
       );
 
       return AstroModel.fromJson(response.data);
@@ -37,10 +38,4 @@ class MyService {
       rethrow;
     }
   }
-
-  ///AstronomyDay API Key
-  String keyAstro = "eXes0AYQPdea8nCm68yLf2lcrow3IjWiaxSNw5QM";
-
-  ///AstronomyDay API Key
-  String keyPlanet = "96fceaad73msh67eb1ab57234972p15c4d3jsn5bb6bfbd8dd0";
 }

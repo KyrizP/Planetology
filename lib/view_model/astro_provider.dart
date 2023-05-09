@@ -22,7 +22,7 @@ class AstroProvider extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       if (e is DioError) {
-        e.response!.statusCode;
+        e.response?.statusCode;
       }
 
       myState = MyState.failed;
