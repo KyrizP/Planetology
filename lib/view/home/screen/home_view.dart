@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:planetology/view/astronomy/screen/astronomy_view.dart';
 import 'package:planetology/view/favorite/screen/favorite_view.dart';
+import '../../feedback/screen/feedback_view.dart';
 import '../widget/card_widget.dart';
 import '../widget/list_drawer.dart';
 import '../../planet/screen/planets_view.dart';
@@ -47,16 +48,26 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
               const SizedBox(height: 20),
+              const PickedDrawer(
+                title: 'Home',
+                icon: Icons.home,
+              ),
+              const SizedBox(height: 10),
               const ListDrawer(
                 title: 'Favorite Planet',
-                icon: Icons.favorite_outline_rounded,
+                icon: Icons.favorite_rounded,
                 page: FavoriteView(),
               ),
               const SizedBox(height: 10),
               const ListDrawer(
                 title: 'Feedback Form',
                 icon: Icons.message_rounded,
-                page: FavoriteView(),
+                page: FeedbackView(),
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.36),
+              const Text(
+                "Made By Rizky",
+                style: TextStyle(color: Color.fromARGB(255, 83, 116, 182)),
               ),
             ],
           ),

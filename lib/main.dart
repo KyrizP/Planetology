@@ -1,6 +1,7 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:planetology/view_model/db_provider.dart';
+import 'package:planetology/view_model/feedback_provider.dart';
 import 'package:provider/provider.dart';
 import 'view/home/screen/home_view.dart';
 import 'view_model/astro_provider.dart';
@@ -25,6 +26,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => DbProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => FeedbackProvider(),
         ),
       ],
       child: MaterialApp(

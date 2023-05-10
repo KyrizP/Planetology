@@ -23,7 +23,7 @@ class _FavoriteViewState extends State<FavoriteView> {
         leading: IconButton(
           splashRadius: 25,
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context).pop();
           },
           icon: const Icon(
             Icons.arrow_back_ios_rounded,

@@ -47,6 +47,7 @@ class _DetailViewState extends State<DetailView> {
                   planet.isFavorite = true;
                 }
               }
+
               return IconButton(
                 splashRadius: 25,
                 onPressed: () async {
