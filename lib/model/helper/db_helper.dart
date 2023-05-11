@@ -45,12 +45,12 @@ class DbHelper {
   }
 
   //method untuk menghapus data
-  Future<void> deleteFavorite(String name) async {
+  Future<void> deleteFavorite(int idPlanet) async {
     final db = await database;
     await db.delete(
       _tableName,
-      where: 'name = ?',
-      whereArgs: [name],
+      where: 'idPlanet = ?',
+      whereArgs: [idPlanet],
     );
   }
 }

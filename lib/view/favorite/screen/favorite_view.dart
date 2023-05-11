@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:planetology/view/planet/screen/detail_view.dart';
 import 'package:provider/provider.dart';
+import '../../../utils/state/my_state.dart';
 import '../../../view_model/db_provider.dart';
 
 class FavoriteView extends StatefulWidget {
@@ -55,7 +56,12 @@ class _FavoriteViewState extends State<FavoriteView> {
             physics: const BouncingScrollPhysics(),
             children: [
               Consumer<DbProvider>(builder: (context, value, _) {
-                if (value.favoriteModels.isEmpty) {
+                if (value.myState == MyState.loading) {
+                  return Center(
+                      child: CircularProgressIndicator(
+                    color: Colors.blueAccent[100],
+                  ));
+                } else if (value.favoriteModels.isEmpty) {
                   return Column(
                     children: [
                       SizedBox(
@@ -72,7 +78,33 @@ class _FavoriteViewState extends State<FavoriteView> {
                       ),
                     ],
                   );
-                } else {
+                } else if (value.myState == MyState.failed) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Text(
+                          'Oops, Something Went Wrong!',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          textAlign: TextAlign.center,
+                          'Make Sure Internet is Connected.',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                } else if (value.myState == MyState.success) {
                   return ListView.builder(
                     itemCount: value.favoriteLength,
                     physics: const NeverScrollableScrollPhysics(),
@@ -141,7 +173,7 @@ class _FavoriteViewState extends State<FavoriteView> {
                                   await value.deleteFavorite(
                                     value.favoriteModels.reversed
                                         .toList()[index]
-                                        .name!,
+                                        .idPlanet!,
                                   );
                                 },
                                 icon: Container(
@@ -167,6 +199,13 @@ class _FavoriteViewState extends State<FavoriteView> {
                         ],
                       );
                     },
+                  );
+                } else {
+                  return const Center(
+                    child: Icon(
+                      Icons.warning_amber_rounded,
+                      color: Colors.red,
+                    ),
                   );
                 }
               }),

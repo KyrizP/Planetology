@@ -1,10 +1,12 @@
 import 'package:flutter/foundation.dart';
 import '../model/favorite_model.dart';
 import '../model/helper/db_helper.dart';
+import '../utils/state/my_state.dart';
 
 class DbProvider extends ChangeNotifier {
   List<FavoriteModel> _favoriteModels = [];
   late DbHelper _dbHelper;
+  MyState myState = MyState.loading;
 
   List<FavoriteModel> get favoriteModels => _favoriteModels;
   int get favoriteLength => _favoriteModels.length;
@@ -15,8 +17,18 @@ class DbProvider extends ChangeNotifier {
   }
 
   void getAllFavorite() async {
-    _favoriteModels = await _dbHelper.getFavorite();
-    notifyListeners();
+    try {
+      myState = MyState.loading;
+      notifyListeners();
+
+      _favoriteModels = await _dbHelper.getFavorite();
+
+      myState = MyState.success;
+      notifyListeners();
+    } catch (e) {
+      myState = MyState.failed;
+      notifyListeners();
+    }
   }
 
   Future<void> addFavorite(FavoriteModel favModel) async {
@@ -24,8 +36,8 @@ class DbProvider extends ChangeNotifier {
     getAllFavorite();
   }
 
-  Future<void> deleteFavorite(String name) async {
-    await _dbHelper.deleteFavorite(name);
+  Future<void> deleteFavorite(int idPlanet) async {
+    await _dbHelper.deleteFavorite(idPlanet);
     getAllFavorite();
   }
 }

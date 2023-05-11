@@ -33,15 +33,12 @@ class _HomeViewState extends State<HomeView> {
           child: Column(
             children: [
               const SizedBox(height: 40),
-              Hero(
-                tag: "AppIcon",
-                child: Image.asset(
-                  "assets/images/app_icon.png",
-                  width: 200,
-                ),
+              Image.asset(
+                "assets/images/app_icon.png",
+                width: 200,
               ),
               const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30.0),
+                padding: EdgeInsets.symmetric(horizontal: 15.0),
                 child: Divider(
                   thickness: 2,
                   color: Colors.grey,
