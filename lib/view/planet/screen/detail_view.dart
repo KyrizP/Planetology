@@ -324,7 +324,7 @@ class _DetailViewState extends State<DetailView> {
                                             SnackBar(
                                               content: const Center(
                                                   child: Text(
-                                                      'Added To Your Favorite List!')),
+                                                      'Something Went Wrong')),
                                               duration:
                                                   const Duration(seconds: 1),
                                               backgroundColor:
