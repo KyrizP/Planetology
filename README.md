@@ -1,4 +1,4 @@
-# planetology
+# Planetology
 
 A new Flutter project.
 
