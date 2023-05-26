@@ -1,6 +1,6 @@
 # Planetology
 
-A new Flutter project.
+Mobile app about description of Planets on solar system and Astronomy picture of the day that can always changing per days.
 
 ## Getting Started
 
